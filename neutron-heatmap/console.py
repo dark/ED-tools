@@ -74,7 +74,7 @@ class Console:
             elif cmd[0:4] == "zoom":
                 coordinates = _parse_coordinates(cmd)
                 if coordinates is None:
-                    print_cmd_help()
+                    _print_cmd_help()
                 else:
                     systems.zoom_in(coordinates[0], coordinates[1])
             elif cmd == "exit":
