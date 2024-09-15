@@ -97,7 +97,8 @@ class GUI(Logger):
             column=1, row=1, sticky=tkinter.E
         )
         ttk.Label(
-            mainframe, text="open heatmap in a browser window using current zoom settings"
+            mainframe,
+            text="open heatmap in a browser window using current zoom settings",
         ).grid(column=2, row=1, sticky=tkinter.W)
         # 2. Interstitial
         ttk.Label(

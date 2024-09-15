@@ -44,7 +44,8 @@ def choose_control(control: str):
         return Console()
     if control == "gui":
         return GUI()
-    raise ValueError('Application bug: unexpected control: %s' % control)
+    raise ValueError("Application bug: unexpected control: %s" % control)
+
 
 def main(input_file: str, control: str):
     # Initialize environment.
@@ -69,8 +70,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--control",
         type=str,
-        choices=['console', 'gui'],
-        default='console',
+        choices=["console", "gui"],
+        default="console",
         help="preferred method to control the inputs",
     )
     args = parser.parse_args()
