@@ -103,7 +103,7 @@ class GUI(Logger):
         # 2. Interstitial
         ttk.Label(
             mainframe, text="NOTE: Zoom in/out are effective at the next 'Display'"
-        ).grid(column=2, row=2, sticky=tkinter.W)
+        ).grid(column=1, row=2, columnspan=2, sticky=tkinter.W)
         # 3. Zoom In
         ttk.Button(mainframe, text="Zoom In", command=self._handle_zoom_in).grid(
             column=1, row=3, sticky=tkinter.E
@@ -112,7 +112,7 @@ class GUI(Logger):
         zoomin_data_frame.grid(
             column=2, row=3, sticky=(tkinter.N, tkinter.W, tkinter.E, tkinter.S)
         )
-        # 3. Zoom Out
+        # 4. Zoom Out
         ttk.Button(mainframe, text="Zoom Out", command=self._systems.zoom_out).grid(
             column=1, row=4, sticky=tkinter.E
         )
