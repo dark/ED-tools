@@ -18,6 +18,7 @@
 #
 
 import re
+import time
 from logger import Logger
 from systems import Systems
 from typing import List, Optional, Tuple
@@ -54,7 +55,7 @@ class Console(Logger):
 
     # Implement the Logger interface.
     def log(self, s: str):
-        print(s)
+        print("%s: %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), s))
 
     def request_loop(self, systems: Systems):
         print("")
