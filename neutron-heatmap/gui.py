@@ -28,9 +28,16 @@ from typing import List, Optional, Tuple
 
 class GUI(Logger):
 
+    def __init__(self):
+        # This will be set when the main window is first displayed
+        self._status_text = None
+
     # Implement the Logger interface.
     def log(self, s: str):
-        print("%s: %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), s))
+        msg = "%s: %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), s)
+        print(msg)
+        if self._status_text is not None:
+            self._status_text.set(msg)
 
     def _handle_zoom_in(self, *args):
         try:
@@ -120,9 +127,18 @@ class GUI(Logger):
             column=2, row=4, sticky=tkinter.W
         )
 
+        # Add a homebrew status bar at the bottom
+        self._status_text = tkinter.StringVar()
+        ttk.Label(
+            mainframe,
+            textvariable=self._status_text,
+            relief="sunken",
+        ).grid(column=1, row=5, columnspan=2, sticky=(tkinter.W, tkinter.E))
+
         # Setup padding for all children of the mainframe
         for child in mainframe.winfo_children():
             child.grid_configure(padx=5, pady=5)
 
+        self.log("Main window ready")
         root.mainloop()
-        print("Exiting...")
+        self.log("Exiting...")
