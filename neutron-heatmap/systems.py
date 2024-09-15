@@ -19,7 +19,7 @@
 
 import pandas as pd
 import plotly.express as px
-from typing import List, Optional, Tuple
+from typing import Tuple
 
 
 class Systems:
