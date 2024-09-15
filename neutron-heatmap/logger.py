@@ -17,7 +17,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-class Logger():
+
+class Logger:
     """Abstract base class to implement a logger sink."""
+
     def log(self, s: str):
         raise NotImplementedError
