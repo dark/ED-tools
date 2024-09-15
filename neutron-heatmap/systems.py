@@ -40,10 +40,12 @@ class Systems:
 
     def display(self):
         """Display a heatmap with the currently selected systems."""
+        self._logger.log("Creating heatmap...")
         # Harcoded number of X and Y bins to avoid rendering charts too large
         px.density_heatmap(
             self._selected_systems, x="coords.x", y="coords.z", nbinsx=1000, nbinsy=1000
         ).show()
+        self._logger.log("Heatmap displayed in a new browser window")
 
     def zoom_out(self):
         """Zoom out to select all systems."""
