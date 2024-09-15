@@ -19,18 +19,21 @@
 
 import pandas as pd
 import plotly.express as px
+from logger import Logger
 from typing import Tuple
 
 
 class Systems:
 
-    def __init__(self, json_data):
+    def __init__(self, json_data, *, logger: Logger):
+        self.logger = logger
+
         # Normalize the JSON structure, but expanding the nested "coords"
         # object to a top-level object.
-        print("Normalizing data...")
+        self.logger.log("Normalizing data...")
         normalized_data = pd.json_normalize(json_data)
         # Only keep systems where the *main* star is a Neutron Star.
-        print("Initializing database...")
+        self.logger.log("Initializing database...")
         self._all_systems = normalized_data.query("mainStar == 'Neutron Star'")
         # Select all systems by default
         self._selected_systems = self._all_systems
@@ -44,12 +47,12 @@ class Systems:
 
     def zoom_out(self):
         """Zoom out to select all systems."""
-        print("Zooming out")
+        self.logger.log("Zooming out")
         self._selected_systems = self._all_systems
 
     def zoom_in(self, coord_0: Tuple[int, int], coord_1: Tuple[int, int]):
         """Zoom in to select systems between the selected coordinates."""
-        print(
+        self.logger.log(
             "Zooming to area between coordinates (%d,%d) and (%d,%d)"
             % (
                 coord_0[0],

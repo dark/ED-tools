@@ -18,6 +18,7 @@
 #
 
 import re
+from logger import Logger
 from systems import Systems
 from typing import List, Optional, Tuple
 
@@ -49,7 +50,11 @@ def _parse_coordinates(cmd: str) -> Optional[List[Tuple[int, int]]]:
     return [(x_0, z_0), (x_1, z_1)]
 
 
-class Console:
+class Console(Logger):
+
+    # Implement the Logger interface.
+    def log(self, s: str):
+        print(s)
 
     def request_loop(self, systems: Systems):
         print("")
