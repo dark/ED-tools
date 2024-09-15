@@ -21,6 +21,7 @@ import argparse
 import gzip
 import json
 from console import Console
+from gui import GUI
 from logger import Logger
 from systems import Systems
 
@@ -41,12 +42,13 @@ def parse_json(input_file: str, logger: Logger):
 def main(input_file: str):
     # Initialize environment.
     console = Console()
+    gui = GUI()
 
-    jdata = parse_json(input_file, console)
+    jdata = parse_json(input_file, gui)
     # Import systems data in the database
-    systems = Systems(jdata, logger=console)
+    systems = Systems(jdata, logger=gui)
     # Handle the interactive request loop
-    console.request_loop(systems)
+    gui.request_loop(systems)
 
 
 if __name__ == "__main__":
