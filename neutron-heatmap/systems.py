@@ -53,7 +53,7 @@ class Systems:
     def zoom_in(self, coord_0: Tuple[int, int], coord_1: Tuple[int, int]):
         """Zoom in to select systems between the selected coordinates."""
         self._logger.log(
-            "Zooming to area between coordinates (%d,%d) and (%d,%d)"
+            "Zooming in to area between coordinates (%d,%d) and (%d,%d)"
             % (
                 coord_0[0],
                 coord_0[1],
