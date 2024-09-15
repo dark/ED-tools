@@ -20,9 +20,8 @@
 import argparse
 import gzip
 import json
-import pandas as pd
-import plotly.express as px
 import re
+from systems import Systems
 from typing import List, Optional, Tuple
 
 
@@ -66,10 +65,7 @@ def parse_coordinates(cmd: str) -> Optional[List[Tuple[int, int]]]:
     return [(x_0, z_0), (x_1, z_1)]
 
 
-def request_loop(all_systems):
-    # Select all systems by default
-    selected_systems = all_systems
-
+def request_loop(systems: Systems):
     print("")
     print("Input your commands at the prompt, '?' for help")
     while True:
@@ -85,38 +81,16 @@ def request_loop(all_systems):
         if cmd == "?" or cmd == "h" or cmd == "help":
             print_cmd_help()
         elif cmd == "display":
-            # Harcoded number of X and Y bins to avoid rendering charts too large
-            px.density_heatmap(
-                selected_systems, x="coords.x", y="coords.z", nbinsx=1000, nbinsy=1000
-            ).show()
+            systems.display()
         elif cmd == "zoom":
             # Exact match on the 'zoom' command
-            print("Zooming out")
-            selected_systems = all_systems
+            systems.zoom_out()
         elif cmd[0:4] == "zoom":
             coordinates = parse_coordinates(cmd)
             if coordinates is None:
                 print_cmd_help()
             else:
-                print(
-                    "Zooming to area between coordinates (%d,%d) and (%d,%d)"
-                    % (
-                        coordinates[0][0],
-                        coordinates[0][1],
-                        coordinates[1][0],
-                        coordinates[1][1],
-                    )
-                )
-                min_x = min(coordinates[0][0], coordinates[1][0])
-                max_x = max(coordinates[0][0], coordinates[1][0])
-                min_z = min(coordinates[0][1], coordinates[1][1])
-                max_z = max(coordinates[0][1], coordinates[1][1])
-                selected_systems = (
-                    all_systems.query(f"`coords.x` > {min_x}")
-                    .query(f"`coords.x` < {max_x}")
-                    .query(f"`coords.z` > {min_z}")
-                    .query(f"`coords.z` < {max_z}")
-                )
+                systems.zoom_in(coordinates[0], coordinates[1])
         elif cmd == "exit":
             break
         else:
@@ -128,15 +102,10 @@ def request_loop(all_systems):
 
 def main(input_file: str):
     jdata = parse_json(input_file)
-    # Normalize the JSON structure, but expanding the nested "coords"
-    # object to a top-level object.
-    print("Normalizing data...")
-    normalized_data = pd.json_normalize(jdata)
-    # Only keep systems where the *main* star is a Neutron Star.
-    print("Initializing database...")
-    all_systems = normalized_data.query("mainStar == 'Neutron Star'")
+    # Import systems data in the database
+    systems = Systems(jdata)
     # Handle the interactive request loop
-    request_loop(all_systems)
+    request_loop(systems)
 
 
 if __name__ == "__main__":
