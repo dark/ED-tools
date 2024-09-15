@@ -39,16 +39,22 @@ def parse_json(input_file: str, logger: Logger):
     return jdata
 
 
-def main(input_file: str):
-    # Initialize environment.
-    console = Console()
-    gui = GUI()
+def choose_control(control: str):
+    if control == "console":
+        return Console()
+    if control == "gui":
+        return GUI()
+    raise ValueError('Application bug: unexpected control: %s' % control)
 
-    jdata = parse_json(input_file, gui)
+def main(input_file: str, control: str):
+    # Initialize environment.
+    control = choose_control(control)
+
+    jdata = parse_json(input_file, control)
     # Import systems data in the database
-    systems = Systems(jdata, logger=gui)
+    systems = Systems(jdata, logger=control)
     # Handle the interactive request loop
-    gui.request_loop(systems)
+    control.request_loop(systems)
 
 
 if __name__ == "__main__":
@@ -60,5 +66,12 @@ if __name__ == "__main__":
         type=str,
         help="input JSON file (.gz compressed or not) from https://spansh.co.uk/dumps",
     )
+    parser.add_argument(
+        "--control",
+        type=str,
+        choices=['console', 'gui'],
+        default='console',
+        help="preferred method to control the inputs",
+    )
     args = parser.parse_args()
-    main(args.input)
+    main(args.input, args.control)
