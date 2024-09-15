@@ -22,7 +22,7 @@ import plotly.express as px
 from typing import List, Optional, Tuple
 
 
-class Systems():
+class Systems:
 
     def __init__(self, json_data):
         # Normalize the JSON structure, but expanding the nested "coords"
