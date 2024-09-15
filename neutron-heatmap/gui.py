@@ -48,9 +48,6 @@ class GUI(Logger):
 
     def _build_zoomin_data_frame(self, mainframe):
         zoomin_data_frame = ttk.Frame(mainframe, padding="1 1 1 1")
-        zoomin_data_frame.grid(
-            column=2, row=2, sticky=(tkinter.N, tkinter.W, tkinter.E, tkinter.S)
-        )
         ttk.Label(zoomin_data_frame, text="zoom in to (x=").grid(
             column=1, row=1, sticky=tkinter.W
         )
@@ -77,6 +74,8 @@ class GUI(Logger):
         z1_entry.grid(column=8, row=1, sticky=(tkinter.W, tkinter.E))
         ttk.Label(zoomin_data_frame, text=")").grid(column=9, row=1, sticky=tkinter.W)
 
+        return zoomin_data_frame
+
     def request_loop(self, systems: Systems):
         self._systems = systems
 
@@ -98,19 +97,26 @@ class GUI(Logger):
             column=1, row=1, sticky=tkinter.E
         )
         ttk.Label(
-            mainframe, text="open heatmap in a browser window using current settings"
+            mainframe, text="open heatmap in a browser window using current zoom settings"
         ).grid(column=2, row=1, sticky=tkinter.W)
-        # 2. Zoom In
+        # 2. Interstitial
+        ttk.Label(
+            mainframe, text="NOTE: Zoom in/out are effective at the next 'Display'"
+        ).grid(column=2, row=2, sticky=tkinter.W)
+        # 3. Zoom In
         ttk.Button(mainframe, text="Zoom In", command=self._handle_zoom_in).grid(
-            column=1, row=2, sticky=tkinter.E
-        )
-        self._build_zoomin_data_frame(mainframe)
-        # 3. Zoom Out
-        ttk.Button(mainframe, text="Zoom Out", command=self._systems.zoom_out).grid(
             column=1, row=3, sticky=tkinter.E
         )
+        zoomin_data_frame = self._build_zoomin_data_frame(mainframe)
+        zoomin_data_frame.grid(
+            column=2, row=3, sticky=(tkinter.N, tkinter.W, tkinter.E, tkinter.S)
+        )
+        # 3. Zoom Out
+        ttk.Button(mainframe, text="Zoom Out", command=self._systems.zoom_out).grid(
+            column=1, row=4, sticky=tkinter.E
+        )
         ttk.Label(mainframe, text="zoom out to the initial state").grid(
-            column=2, row=3, sticky=tkinter.W
+            column=2, row=4, sticky=tkinter.W
         )
 
         # Setup padding for all children of the mainframe
