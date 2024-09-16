@@ -159,6 +159,14 @@ class GUI(Logger):
         root.rowconfigure(0, weight=1)
 
         # Setup all actions
+        #
+        # The first column will include buttons, while the second will
+        # have labels; to preserve the layout when the window is
+        # stretched (e.g. when the status bar has a very long text),
+        # ensure that the first column never resizes, while the second
+        # one always will.
+        self._mainframe.columnconfigure(1, weight=0)
+        self._mainframe.columnconfigure(2, weight=1)
         # 1. Display
         ttk.Button(
             self._mainframe,
