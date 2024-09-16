@@ -51,11 +51,13 @@ def main(input_file: str, control: str):
     # Initialize environment.
     control = choose_control(control)
 
-    jdata = parse_json(input_file, control)
-    # Import systems data in the database
-    systems = Systems(jdata, logger=control)
+    def init_systems() -> Systems:
+        jdata = parse_json(input_file, control)
+        # Import systems data in the database
+        return Systems(jdata, logger=control)
+
     # Handle the interactive request loop
-    control.request_loop(systems)
+    control.request_loop(init_fn=init_systems)
 
 
 if __name__ == "__main__":

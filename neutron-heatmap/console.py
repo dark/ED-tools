@@ -20,7 +20,6 @@
 import re
 import time
 from logger import Logger
-from systems import Systems
 from typing import List, Optional, Tuple
 
 
@@ -57,7 +56,10 @@ class Console(Logger):
     def log(self, s: str):
         print("%s: %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), s))
 
-    def request_loop(self, systems: Systems):
+    def request_loop(self, *, init_fn):
+        # Wait for the system to init before proceeding further
+        systems = init_fn()
+
         print("")
         print("Input your commands at the prompt, '?' for help")
         while True:

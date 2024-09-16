@@ -23,7 +23,6 @@ import threading
 import time
 import tkinter
 from logger import Logger
-from systems import Systems
 from tkinter import ttk
 from typing import List, Optional, Tuple
 
@@ -218,8 +217,9 @@ class GUI(Logger):
         self._longop_thread = threading.Thread(target=_worker)
         self._longop_thread.start()
 
-    def request_loop(self, systems: Systems):
-        self._systems = systems
+    def request_loop(self, *, init_fn):
+        # Wait for the system to init before proceeding further
+        self._systems = init_fn()
 
         # Setup main window
         self._setup_window()
