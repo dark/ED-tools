@@ -106,12 +106,15 @@ class GUI(Logger):
         self._progressbar.stop()
         self._progressbar.grid_remove()
 
+    def _buttons_change_state(self, state):
+        for child in self._mainframe.winfo_children():
+            if isinstance(child, ttk.Button):
+                child["state"] = state
+
     def _long_op_pre(self):
         """Prepare for a long op"""
         # Disable all buttons
-        for child in self._mainframe.winfo_children():
-            if isinstance(child, ttk.Button):
-                child["state"] = tkinter.DISABLED
+        self._buttons_change_state(tkinter.DISABLED)
         # Display and start the progress bar
         self._progressbar_start()
 
@@ -123,9 +126,7 @@ class GUI(Logger):
         self._longop_thread.join()
         self._longop_thread = None
         # Restore all buttons
-        for child in self._mainframe.winfo_children():
-            if isinstance(child, ttk.Button):
-                child["state"] = tkinter.NORMAL
+        self._buttons_change_state(tkinter.NORMAL)
         # Stop and hide the progress bar
         self._progressbar_stop()
 
