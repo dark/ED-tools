@@ -87,12 +87,31 @@ class GUI(Logger):
 
         return zoomin_data_frame
 
+    def _progressbar_start(self):
+        if self._progressbar is None:
+            self._progressbar = ttk.Progressbar(
+                self._mainframe,
+                orient=tkinter.HORIZONTAL,
+                mode="indeterminate",
+                maximum=40,
+            )
+        self._progressbar.grid(
+            column=1, row=5, columnspan=2, sticky=(tkinter.W, tkinter.E)
+        )
+        self._progressbar.start()
+
+    def _progressbar_stop(self):
+        self._progressbar.stop()
+        self._progressbar.grid_remove()
+
     def _long_op_pre(self):
         """Prepare for a long op"""
         # Disable all buttons
         for child in self._mainframe.winfo_children():
             if isinstance(child, ttk.Button):
                 child["state"] = tkinter.DISABLED
+        # Display and start the progress bar
+        self._progressbar_start()
 
     def _long_op_post(self, event):
         """Recover from a long op."""
@@ -105,6 +124,8 @@ class GUI(Logger):
         for child in self._mainframe.winfo_children():
             if isinstance(child, ttk.Button):
                 child["state"] = tkinter.NORMAL
+        # Stop and hide the progress bar
+        self._progressbar_stop()
 
     def _handle_long_op(self, fn):
         # Prepare for a long op
@@ -171,13 +192,16 @@ class GUI(Logger):
             column=2, row=4, sticky=tkinter.W
         )
 
+        # Add a progress bar for long operations; this will be created on-demand
+        self._progressbar = None
+
         # Add a homebrew status bar at the bottom
         self._status_text = tkinter.StringVar()
         ttk.Label(
             self._mainframe,
             textvariable=self._status_text,
             relief="sunken",
-        ).grid(column=1, row=5, columnspan=2, sticky=(tkinter.W, tkinter.E))
+        ).grid(column=1, row=6, columnspan=2, sticky=(tkinter.W, tkinter.E))
 
         # Setup padding for all children of the mainframe
         for child in self._mainframe.winfo_children():
