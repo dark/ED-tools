@@ -89,12 +89,14 @@ class GUI(Logger):
 
     def _progressbar_start(self):
         if self._progressbar is None:
+            # Create the progressbar if this is our first time using it
             self._progressbar = ttk.Progressbar(
                 self._mainframe,
                 orient=tkinter.HORIZONTAL,
                 mode="indeterminate",
                 maximum=40,
             )
+            self._progressbar.grid_configure(padx=5, pady=5)
         self._progressbar.grid(
             column=1, row=5, columnspan=2, sticky=(tkinter.W, tkinter.E)
         )
