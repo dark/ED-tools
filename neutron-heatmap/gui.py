@@ -34,6 +34,8 @@ class GUI(Logger):
         self._status_text = None
         # Separate thread where long-operations are offloaded to
         self._longop_thread = None
+        # This will be set when the main request loop is called
+        self._systems = None
 
     def _setup_window(self):
         # Setup root (main application window)
@@ -62,7 +64,7 @@ class GUI(Logger):
         ttk.Button(
             self._mainframe,
             text="Display",
-            command=functools.partial(self._handle_long_op, self._systems.display),
+            command=functools.partial(self._handle_long_op, self._handle_display),
         ).grid(column=1, row=1, sticky=tkinter.E)
         ttk.Label(
             self._mainframe,
@@ -85,7 +87,7 @@ class GUI(Logger):
         )
         # 4. Zoom Out
         ttk.Button(
-            self._mainframe, text="Zoom Out", command=self._systems.zoom_out
+            self._mainframe, text="Zoom Out", command=self._handle_zoom_out
         ).grid(column=1, row=4, sticky=tkinter.E)
         ttk.Label(self._mainframe, text="zoom out to the initial state").grid(
             column=2, row=4, sticky=tkinter.W
@@ -115,6 +117,9 @@ class GUI(Logger):
         if self._status_text is not None:
             self._status_text.set(msg)
 
+    def _handle_display(self, *args):
+        self._systems.display()
+
     def _handle_zoom_in(self, *args):
         try:
             coord0 = (int(self.x0.get()), int(self.z0.get()))
@@ -128,6 +133,9 @@ class GUI(Logger):
             return
 
         self._systems.zoom_in(coord0, coord1)
+
+    def _handle_zoom_out(self, *args):
+        self._systems.zoom_out()
 
     def _build_zoomin_data_frame(self, mainframe):
         zoomin_data_frame = ttk.Frame(mainframe, padding="1 1 1 1")
