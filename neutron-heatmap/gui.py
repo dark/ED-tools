@@ -186,3 +186,8 @@ class GUI(Logger):
         self.log("Main window ready")
         root.mainloop()
         self.log("Exiting...")
+        # Wait for the background thread, if it is still running
+        if self._longop_thread is not None:
+            self._longop_thread.join()
+            self._longop_thread = None
+        self.log("Exited")
