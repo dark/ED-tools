@@ -37,6 +37,7 @@ class Systems:
         self._all_systems = normalized_data.query("mainStar == 'Neutron Star'")
         # Select all systems by default
         self._selected_systems = self._all_systems
+        self._logger.log("Database initialized")
 
     def display(self):
         """Display a heatmap with the currently selected systems."""

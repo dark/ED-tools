@@ -18,10 +18,12 @@
 #
 
 import functools
+import os
 import re
 import threading
 import time
 import tkinter
+import traceback
 from logger import Logger
 from tkinter import ttk
 from typing import List, Optional, Tuple
@@ -226,13 +228,24 @@ class GUI(Logger):
         self._longop_thread.start()
 
     def request_loop(self, *, init_fn):
-        # Wait for the system to init before proceeding further
-        self._systems = init_fn()
+        def systems_init():
+            try:
+                self._systems = init_fn()
+            except Exception:
+                print(traceback.format_exc())
+                # The situation is bad enough to warrant a full
+                # shutdown, killing everything. Also, remember: this
+                # is run in another thread.
+                os._exit(1)
 
         # Setup main window
         self._setup_window()
 
-        # Call the main event loop
+        # Handle the system initialization like a long operation
+        self._handle_long_op(systems_init)
+
+        # Call the main event loop while init is progressing. The main
+        # loop will wait for init to finish.
         self._root.mainloop()
 
         self.log("Exiting...")
