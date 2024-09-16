@@ -49,13 +49,14 @@ class Systems:
 
     def zoom_out(self):
         """Zoom out to select all systems."""
-        self._logger.log("Zooming out")
+        self._logger.log("Zooming out...")
         self._selected_systems = self._all_systems
+        self._logger.log("Zoomed out")
 
     def zoom_in(self, coord_0: Tuple[int, int], coord_1: Tuple[int, int]):
         """Zoom in to select systems between the selected coordinates."""
         self._logger.log(
-            "Zooming in to area between coordinates (%d,%d) and (%d,%d)"
+            "Zooming in to area between coordinates (%d,%d) and (%d,%d)..."
             % (
                 coord_0[0],
                 coord_0[1],
@@ -73,3 +74,4 @@ class Systems:
             .query(f"`coords.z` > {min_z}")
             .query(f"`coords.z` < {max_z}")
         )
+        self._logger.log("Zoom in complete")
