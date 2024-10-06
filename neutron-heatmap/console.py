@@ -27,6 +27,7 @@ def _print_cmd_help():
         """Available commands:
   ?                - print this help
   display          - open heatmap in a browser window
+  save FILENAME    - save heatmap to a file
   zoom x1,z1 x2,z2 - zoom in to the provided coordinates (effective at the next `display`)
   zoom             - zoom out to the initial state (effective at the next `display`)
   exit             - exit the program"""
@@ -65,6 +66,8 @@ class Console(Logger):
                 _print_cmd_help()
             elif cmd == "display":
                 systems.display()
+            elif cmd == "save" and len(cmd_tokens) == 2:
+                systems.save(cmd_tokens[1])
             elif cmd == "zoom":
                 if len(cmd_tokens) == 1:
                     # Exact match on the 'zoom' command: zoom out

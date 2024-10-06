@@ -48,6 +48,15 @@ class Systems:
         ).show()
         self._logger.log("Heatmap displayed in a new browser window")
 
+    def save(self, filename: str):
+        """Save a heatmap with the currently selected systemsto file."""
+        self._logger.log("Saving heatmap to %s..." % filename)
+        # Harcoded number of X and Y bins to avoid rendering charts too large
+        px.density_heatmap(
+            self._selected_systems, x="coords.x", y="coords.z", nbinsx=1000, nbinsy=1000
+        ).write_html(filename)
+        self._logger.log("Heatmap saved to %s" % filename)
+
     def zoom_out(self):
         """Zoom out to select all systems."""
         self._logger.log("Zooming out...")
