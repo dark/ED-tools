@@ -17,7 +17,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import re
 import time
 from logger import Logger
 from typing import List, Optional, Tuple
@@ -34,22 +33,6 @@ def _print_cmd_help():
     )
 
 
-def _parse_coordinates(cmd: str) -> Optional[List[Tuple[int, int]]]:
-    if len(cmd) <= 5 or cmd[0:5] != "zoom ":
-        return None
-    matches = re.fullmatch("(?i:zoom) ([-+0-9]*),([-+0-9]*) ([-+0-9]*),([-+0-9]*)", cmd)
-    if matches is None:
-        return None
-    try:
-        x_0 = int(matches[1])
-        z_0 = int(matches[2])
-        x_1 = int(matches[3])
-        z_1 = int(matches[4])
-    except:
-        return None
-    return [(x_0, z_0), (x_1, z_1)]
-
-
 class Console(Logger):
 
     # Implement the Logger interface.
@@ -64,7 +47,7 @@ class Console(Logger):
         print("Input your commands at the prompt, '?' for help")
         while True:
             try:
-                cmd = input("> ").lower()
+                cmd_tokens = input("> ").lower().split()
             except KeyboardInterrupt:
                 # Ctrl+C
                 break
@@ -72,19 +55,30 @@ class Console(Logger):
                 # Ctrl+D
                 break
 
+            if len(cmd_tokens) == 0:
+                # Empty command
+                _print_cmd_help()
+                continue
+
+            cmd = cmd_tokens[0]
             if cmd == "?" or cmd == "h" or cmd == "help":
                 _print_cmd_help()
             elif cmd == "display":
                 systems.display()
             elif cmd == "zoom":
-                # Exact match on the 'zoom' command
-                systems.zoom_out()
-            elif cmd[0:4] == "zoom":
-                coordinates = _parse_coordinates(cmd)
-                if coordinates is None:
-                    _print_cmd_help()
+                if len(cmd_tokens) == 1:
+                    # Exact match on the 'zoom' command: zoom out
+                    systems.zoom_out()
+                elif len(cmd_tokens) == 3:
+                    # 'zoom' command + 2 parameters: this is a zoom in
+                    coordinates = self._parse_coordinates(cmd_tokens[1:])
+                    if coordinates is None:
+                        _print_cmd_help()
+                    else:
+                        systems.zoom_in(coordinates[0], coordinates[1])
                 else:
-                    systems.zoom_in(coordinates[0], coordinates[1])
+                    # Wrong number of parameters
+                    _print_cmd_help()
             elif cmd == "exit":
                 break
             else:
@@ -92,3 +86,28 @@ class Console(Logger):
                 _print_cmd_help()
 
         print("Exiting...")
+
+    def _parse_coordinates(
+        self, cmd_parameters: List[str]
+    ) -> Optional[List[Tuple[int, int]]]:
+        if len(cmd_parameters) != 2:
+            return None
+
+        first = cmd_parameters[0].split(",")
+        if len(first) != 2:
+            self.log("First coordinate in bad format: %s" % cmd_parameters[0])
+            return None
+        second = cmd_parameters[1].split(",")
+        if len(second) != 2:
+            self.log("Second coordinate in bad format: %s" % cmd_parameters[1])
+            return None
+
+        try:
+            x_0 = int(first[0])
+            z_0 = int(first[1])
+            x_1 = int(second[0])
+            z_1 = int(second[1])
+        except Exception as e:
+            self.log("Parse error: %s" % e)
+            return None
+        return [(x_0, z_0), (x_1, z_1)]
