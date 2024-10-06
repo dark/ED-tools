@@ -28,8 +28,8 @@ def _print_cmd_help():
   ?                - print this help
   display          - open heatmap in a browser window
   save FILENAME    - save heatmap to a file
-  zoom x1,z1 x2,z2 - zoom in to the provided coordinates (effective at the next `display`)
-  zoom             - zoom out to the initial state (effective at the next `display`)
+  zoom x1,z1 x2,z2 - zoom in to the provided coordinates (effective at the next `display` or `save`)
+  zoom             - zoom out to the initial state (effective at the next `display` or `save`)
   exit             - exit the program"""
     )
 
