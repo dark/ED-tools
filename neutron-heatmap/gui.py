@@ -25,7 +25,7 @@ import time
 import tkinter
 import traceback
 from logger import Logger
-from tkinter import ttk
+from tkinter import filedialog, ttk
 from typing import List, Optional, Tuple
 
 
@@ -70,29 +70,39 @@ class GUI(Logger):
         ).grid(column=1, row=1, sticky=tkinter.E)
         ttk.Label(
             self._mainframe,
-            text="open heatmap in a browser window using current zoom settings",
+            text="open heatmap in a browser window, using current zoom settings",
         ).grid(column=2, row=1, sticky=tkinter.W)
-        # 2. Interstitial
+        # 2. Save
+        ttk.Button(
+            self._mainframe,
+            text="Save",
+            command=functools.partial(self._handle_long_op, self._handle_save),
+        ).grid(column=1, row=2, sticky=tkinter.E)
         ttk.Label(
             self._mainframe,
-            text="NOTE: Zoom in/out are effective at the next 'Display'",
-        ).grid(column=1, row=2, columnspan=2, sticky=tkinter.W)
-        # 3. Zoom In
+            text="save heatmap to a file, using current zoom settings",
+        ).grid(column=2, row=2, sticky=tkinter.W)
+        # 3. Interstitial
+        ttk.Label(
+            self._mainframe,
+            text="NOTE: Zoom in/out are effective at the next 'Display' or 'Save'",
+        ).grid(column=1, row=3, columnspan=2, sticky=tkinter.W)
+        # 4. Zoom In
         ttk.Button(
             self._mainframe,
             text="Zoom In",
             command=functools.partial(self._handle_long_op, self._handle_zoom_in),
-        ).grid(column=1, row=3, sticky=tkinter.E)
+        ).grid(column=1, row=4, sticky=tkinter.E)
         zoomin_data_frame = self._build_zoomin_data_frame(self._mainframe)
         zoomin_data_frame.grid(
-            column=2, row=3, sticky=(tkinter.N, tkinter.W, tkinter.E, tkinter.S)
+            column=2, row=4, sticky=(tkinter.N, tkinter.W, tkinter.E, tkinter.S)
         )
-        # 4. Zoom Out
+        # 5. Zoom Out
         ttk.Button(
             self._mainframe, text="Zoom Out", command=self._handle_zoom_out
-        ).grid(column=1, row=4, sticky=tkinter.E)
+        ).grid(column=1, row=5, sticky=tkinter.E)
         ttk.Label(self._mainframe, text="zoom out to the initial state").grid(
-            column=2, row=4, sticky=tkinter.W
+            column=2, row=5, sticky=tkinter.W
         )
 
         # Add a progress bar for long operations; this will be created on-demand
@@ -104,7 +114,7 @@ class GUI(Logger):
             self._mainframe,
             textvariable=self._status_text,
             relief="sunken",
-        ).grid(column=1, row=6, columnspan=2, sticky=(tkinter.W, tkinter.E))
+        ).grid(column=1, row=7, columnspan=2, sticky=(tkinter.W, tkinter.E))
 
         # Setup padding for all children of the mainframe
         for child in self._mainframe.winfo_children():
@@ -121,6 +131,12 @@ class GUI(Logger):
 
     def _handle_display(self, *args):
         self._systems.display()
+
+    def _handle_save(self, *args):
+        filename = filedialog.asksaveasfilename(
+            defaultextension=".html", filetypes=[("HTML file", ".html")]
+        )
+        self._systems.save(filename)
 
     def _handle_zoom_in(self, *args):
         try:
@@ -180,7 +196,7 @@ class GUI(Logger):
             )
             self._progressbar.grid_configure(padx=5, pady=5)
         self._progressbar.grid(
-            column=1, row=5, columnspan=2, sticky=(tkinter.W, tkinter.E)
+            column=1, row=6, columnspan=2, sticky=(tkinter.W, tkinter.E)
         )
         self._progressbar.start()
 
